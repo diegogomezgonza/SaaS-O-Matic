@@ -4,7 +4,17 @@ Fecha: 18 de noviembre de 2026. Implementación y comprobaciones en la fase decl
 
 ## Ampliación de cobertura
 
-La verificación posterior amplía la suite original de seis tests a **21 tests en nueve archivos**, todos correctos y sin omisiones. Tras retirar una exportación sin uso, `npm run test:coverage` exige y alcanza 100% por archivo en las cuatro métricas: **339/339 sentencias, 257/257 ramas, 94/94 funciones y 298/298 líneas**. Hay 24 módulos con instrucciones cubiertas y una reexportación sin instrucciones ejecutables. Solo se excluyen del porcentaje `src/main.jsx` y `server/index.js`; no se excluyen componentes ni ramas de seguridad para subir el resultado.
+La verificación posterior amplía la suite original de seis tests a **32 tests en diez archivos**, todos correctos y sin omisiones. Tras las correcciones de Unicode, `npm run test:coverage` exige y alcanza 100% por archivo en las cuatro métricas: **344/344 sentencias, 257/257 ramas, 95/95 funciones y 302/302 líneas**. Hay 24 módulos con instrucciones cubiertas y una reexportación sin instrucciones ejecutables. Solo se excluyen del porcentaje `src/main.jsx` y `server/index.js`; no se excluyen componentes ni ramas de seguridad para subir el resultado.
+
+## Regresiones de Unicode corregidas
+
+Se añadieron once casos en `tests/unicode.test.js`. Antes del cambio fallaban diez, reproduciendo corrupción de UTF-8 y búsquedas no equivalentes; el control de exceso de bytes ya pasaba. Tras la corrección pasan los once y la suite completa de 32 tests. Se verifican caracteres de dos, tres y cuatro bytes divididos en todas sus fronteras internas, rechazo de UTF-8 inválido, límite real de bytes, búsqueda por caso/acentos/formas canónicas, distinción `ñ`/`n`, SQL literal y reapertura de datos persistidos.
+
+La API acumula bytes hasta el límite y decodifica una vez con UTF-8 estricto. SQLite registra la función determinista `search_key` para normalizar solo las comparaciones, sin alterar nombres guardados ni migrar el esquema. Los tests reales de HTTP y SQLite no utilizan mocks para estas regresiones.
+
+También se amplió el recorrido de Chrome para registrar `Árbol Diseño · Fixture` y buscarlo con `arbol`, `ÁRBOL` y `árbol`. E2E, comprobaciones responsive y build vuelven a pasar. El informe HTML, el PNG completo y la captura de cobertura del README se actualizan con el nuevo resultado. El inventario actual contiene 58 archivos propios, incluido el nuevo archivo de tests.
+
+## Comprobaciones anteriores
 
 Tras alinear las rutas con el enunciado se repitió toda la generación: backend y frontend usan `POST /customers` y `POST /simulations`, sin prefijo. Las rutas antiguas devuelven 404. El test adicional verifica que el proxy compartido de desarrollo/preview/E2E solo capture familias del backend y deje servir el frontend. El recorrido de navegador comprueba expresamente los paths de los POST realizados. HTML y PNG regenerados con 21/21 tests correctos, cobertura 100%, E2E y build correctos.
 
@@ -20,17 +30,17 @@ La auditoría posterior de herramientas de desarrollo reporta **14 avisos: 12 al
 
 ## Resultado
 
-Los requisitos funcionales del enunciado se han implementado para el alcance local y las decisiones explícitas de `especificacion.md`. La aplicación arranca con `npm run dev`, que inicia frontend y API. No se han publicado servicios ni creado un repositorio público.
+Los requisitos funcionales del enunciado se han implementado para el alcance local y las decisiones explícitas de `especificacion.md`. La aplicación arranca con `npm run dev`, que inicia frontend y API. El código está versionado en GitHub; no hay un servicio de la aplicación desplegado públicamente.
 
-| Área | Evidencia |
-| --- | --- |
-| Compilación | `npm run build` correcto, Vite 6.4.6 |
-| Consistencia de formato | `npm run format:check` correcto |
-| Dominio, integración y frontend | `npm test`: 21 pruebas correctas, 0 fallos |
-| Navegador | `npm run test:e2e`: recorrido completo correcto en Chrome headless |
-| Responsive | Capturas y comprobación automática sin overflow horizontal a 320, 390, 768 y 1440 px |
-| Proveedor real | Consulta HTTPS correcta: EUR, USD y GBP con fecha de actualización del proveedor |
-| Dependencias de ejecución | `npm audit --omit=dev`: 0 vulnerabilidades reportadas |
+| Área                            | Evidencia                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------ |
+| Compilación                     | `npm run build` correcto, Vite 6.4.6                                                 |
+| Consistencia de formato         | `npm run format:check` correcto                                                      |
+| Dominio, integración y frontend | `npm test`: 32 pruebas correctas, 0 fallos                                           |
+| Navegador                       | `npm run test:e2e`: recorrido completo correcto en Chrome headless                   |
+| Responsive                      | Capturas y comprobación automática sin overflow horizontal a 320, 390, 768 y 1440 px |
+| Proveedor real                  | Consulta HTTPS correcta: EUR, USD y GBP con fecha de actualización del proveedor     |
+| Dependencias de ejecución       | `npm audit --omit=dev`: 0 vulnerabilidades reportadas                                |
 
 ## Funcionalidad comprobada
 

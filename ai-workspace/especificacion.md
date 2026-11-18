@@ -7,6 +7,8 @@ Según indicación del candidato: planificación, plantilla y skills con **GPT 5
 ## Alcance y decisiones
 
 - Alta, búsqueda por empresa/NIF, selección y detalle de clientes; email, país y plan obligatorios.
+- JSON UTF-8 estricto: conservar caracteres multibyte entre bloques HTTP, rechazar secuencias inválidas con 400 y aplicar el límite de 16 KB a bytes reales.
+- Búsqueda normalizada en Unicode: ignorar mayúsculas y variantes de acentos, admitir formas canónicas equivalentes y mantener `ñ` distinta de `n`. No modificar nombres almacenados ni requerir migración de registros.
 - SQLite real con unicidad por país e identificador fiscal; consultas parametrizadas, claves foráneas y archivo local excluido de Git.
 - Simulación: usuarios enteros 0–100000, almacenamiento GB 0–1000000, llamadas API enteras 0–1000000000. Valores no negativos y límites explícitos.
 - Planes Starter, Business y Enterprise como etiquetas comerciales: no cambian las tarifas porque el enunciado no define diferencias.

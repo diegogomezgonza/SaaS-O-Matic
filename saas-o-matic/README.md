@@ -111,6 +111,8 @@ GET /exchange-rates
 
 Searches return up to 100 matches. Customer history is ordered newest first. Missing resources return `404`.
 
+Search comparisons handle Unicode case, accented and unaccented variants, and canonical forms. For example, `Árbol`, `árbol`, and `arbol` find the same company; `Peña` and `Pena` remain distinct. Original names are preserved, including on existing records after reopening SQLite.
+
 ### Validation limits
 
 | Field         | Constraint                                                                                 |
@@ -125,6 +127,8 @@ Searches return up to 100 matches. Customer history is ordered newest first. Mis
 | `apiCalls`    | Integer from 0 to 1,000,000,000                                                            |
 
 Unknown fields are rejected. Errors use `{ message, fields? }`; successful writes return `201`, validation failures `422`, and duplicate customers `409`.
+
+Request bodies are limited to 16 KB of raw bytes and decoded once as strict UTF-8, so HTTP chunk boundaries cannot corrupt multibyte characters. Malformed UTF-8 or JSON returns `400`; oversized requests return `413`.
 
 ## Persistence and exchange rates
 

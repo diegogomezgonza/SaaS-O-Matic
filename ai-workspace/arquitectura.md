@@ -19,20 +19,20 @@ El frontend utiliza las rutas del backend mediante un proxy de Vite limitado a e
 
 ## Organización del código
 
-| Ubicación en `saas-o-matic/` | Responsabilidad |
-| --- | --- |
-| `src/app` y `src/main.jsx` | Composición y entrada de React |
-| `src/features/customers` | Alta, búsqueda, selección, detalle, hook y servicio de clientes |
-| `src/features/simulations` | Formulario de consumo, desglose, histórico y servicio de guardado |
+| Ubicación en `saas-o-matic/`                  | Responsabilidad                                                        |
+| --------------------------------------------- | ---------------------------------------------------------------------- |
+| `src/app` y `src/main.jsx`                    | Composición y entrada de React                                         |
+| `src/features/customers`                      | Alta, búsqueda, selección, detalle, hook y servicio de clientes        |
+| `src/features/simulations`                    | Formulario de consumo, desglose, histórico y servicio de guardado      |
 | `src/components/layout` y `src/components/ui` | Estructura de pantalla y controles reutilizables sin reglas de negocio |
-| `src/shared` y `src/lib` | HTTP, cambios de divisa, formatos y composición de clases |
-| `src/styles/globals.css` | Tokens semánticos, estilos globales y adaptación accesible |
-| `shared` | Catálogo comercial y cálculo puro compartido de precios |
-| `server/app.js` | Rutas, límites HTTP, origen/host y errores seguros |
-| `server/validation.js` y `server/domain` | Campos permitidos, rangos y algoritmo de control fiscal |
-| `server/database.js` | Única frontera de persistencia SQLite |
-| `server/exchange-rates.js` | Única integración con el proveedor externo |
-| `config`, `tests` y `scripts` | Configuración de proxy, verificación y herramientas reproducibles |
+| `src/shared` y `src/lib`                      | HTTP, cambios de divisa, formatos y composición de clases              |
+| `src/styles/globals.css`                      | Tokens semánticos, estilos globales y adaptación accesible             |
+| `shared`                                      | Catálogo comercial y cálculo puro compartido de precios                |
+| `server/app.js`                               | Rutas, límites HTTP, origen/host y errores seguros                     |
+| `server/validation.js` y `server/domain`      | Campos permitidos, rangos y algoritmo de control fiscal                |
+| `server/database.js`                          | Única frontera de persistencia SQLite                                  |
+| `server/exchange-rates.js`                    | Única integración con el proveedor externo                             |
+| `config`, `tests` y `scripts`                 | Configuración de proxy, verificación y herramientas reproducibles      |
 
 ## Modelo de datos
 
@@ -60,6 +60,10 @@ erDiagram
 ```
 
 `customers` tiene unicidad en `(country, taxId)`. `simulations.customerId` referencia el cliente y tiene un índice con fecha para consultar el histórico. Se activan claves foráneas y WAL. Las consultas están parametrizadas; el archivo de datos está excluido de Git.
+
+Cada conexión registra la función determinista `search_key`, que normaliza mayúsculas, acentos y formas Unicode para las comparaciones SQL. Conserva la distinción entre `ñ` y `n`; los nombres originales y el esquema no se alteran. Funciona también sobre registros anteriores al cambio.
+
+En la frontera HTTP se acumulan bloques binarios hasta el límite de 16 KB y se decodifica UTF-8 una sola vez. El decodificador rechaza secuencias inválidas, evitando caracteres de reemplazo cuando un punto de código se divide entre bloques.
 
 `quote` conserva un JSON con el desglose: usuarios por tramo, precio unitario, base, porcentaje de impuesto, impuesto y total en céntimos. Se calcula en servidor al guardar, sin aceptar importes suministrados por el navegador. La interfaz usa la misma función pura para previsualizar. Los tipos de cambio no modifican el presupuesto guardado.
 

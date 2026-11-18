@@ -35,6 +35,15 @@ El archivo se encuentra en la raíz de `saas-o-matic` por indicación del usuari
 
 ## Implementación y comprobaciones
 
+- [x] Corrección de Unicode en registro y búsqueda de clientes.
+  - Reproducir los fallos con tests de regresión antes de modificar la implementación: 10 fallos y 1 caso de límite de bytes correcto.
+  - Acumular bytes y decodificar UTF-8 de forma estricta una sola vez, conservando caracteres de dos, tres y cuatro bytes entre bloques HTTP.
+  - Rechazar UTF-8 mal formado y mantener el límite de petición en bytes reales.
+  - Normalizar las comparaciones de búsqueda por caso, acentos y formas canónicas, conservando la distinción `ñ`/`n` y los nombres originales.
+  - Verificar persistencia y búsqueda tras reabrir SQLite sin migraciones ni cambios en los registros existentes.
+  - Ampliar el recorrido de navegador para registrar un nombre acentuado y localizarlo con y sin acentos.
+  - Completar 32 tests correctos, sin omisiones, y mantener 100% por archivo en líneas, sentencias, funciones y ramas; regenerar HTML, PNG y captura de cobertura del README tras pasar E2E y build.
+
 - [x] Revisión de los README para una documentación técnica profesional en inglés.
   - Consultar la estructura de los README de Vite, Fastify y Vitest como referencia de organización.
   - Documentar arranque, arquitectura, API, comandos, configuración, pruebas y límites técnicos, con enlaces directos a las dos skills.

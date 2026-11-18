@@ -136,10 +136,24 @@ try {
     .locator('#currency option[value="USD"]:not([disabled])')
     .waitFor({ state: 'attached' });
   assert.equal(await page.locator('#currency option[value="USD"]').isDisabled(), false);
+  await page.getByRole('button', { name: 'Registrar cliente', exact: true }).click();
+  await page.getByLabel('Nombre de empresa', { exact: true }).fill('Árbol Diseño · Fixture');
+  await page.getByLabel('Identificador fiscal', { exact: true }).fill('C12345674');
+  await page.getByLabel('Email de contacto').fill('unicode-fixture@example.test');
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Registrar cliente', exact: true })
+    .click();
+  await page.getByRole('heading', { name: 'Árbol Diseño · Fixture', exact: true }).waitFor();
+  for (const query of ['arbol', 'ÁRBOL', 'árbol']) {
+    await page.getByLabel('Buscar por empresa o identificador fiscal').fill(query);
+    await page.getByRole('button', { name: /Árbol Diseño/ }).click();
+    await page.getByRole('heading', { name: 'Árbol Diseño · Fixture', exact: true }).waitFor();
+  }
   assert.deepEqual(errors, []);
   assert.deepEqual([...writes].sort(), ['/customers', '/simulations']);
   console.log(
-    'PASS: registration, invalid NIF, search, selection, quote, slider, saving, history, reload, USD/GBP, provider failure/retry, dialog Escape; no overflow at 320/390/768/1440; no JS errors.',
+    'PASS: registration, invalid NIF, search, selection, quote, slider, saving, history, reload, USD/GBP, provider failure/retry, dialog Escape, Unicode registration and accented/unaccented search; no overflow at 320/390/768/1440; no JS errors.',
   );
 } finally {
   await browser?.close();

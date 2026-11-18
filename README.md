@@ -92,6 +92,8 @@ Routes have **no `/api` prefix**. Write requests require `Content-Type: applicat
 
 Customer fields: `companyName`, `taxId`, `email`, `country`, `plan`. Simulation fields: `customerId`, `users`, `storageGb`, `apiCalls`.
 
+JSON bodies are decoded as strict UTF-8 after enforcing the byte limit. Customer search normalizes Unicode case, accent variants, and canonical forms while preserving the distinction between `ñ` and `n`; stored names remain unchanged.
+
 Responses use `201` for creation, `422` for validation errors, `409` for duplicate customers, and `404` for missing resources. Errors follow `{ message, fields? }`. Supplied price fields are rejected; the API calculates totals. Customer searches return up to 100 matches.
 
 Examples, validation limits, and configuration are documented in the [runtime reference](saas-o-matic/README.md).
@@ -130,7 +132,7 @@ npx playwright install chromium
 
 `CHROME_PATH` can point to a custom browser executable. E2E uses an in-memory SQLite database and fixture exchange rates, without modifying application data. It checks customer registration, search, validation errors, pricing, saving, history, currencies, retries, and layouts at 320, 390, 768, and 1440 pixels.
 
-The recorded report contains **21 passing tests** and **100% lines, statements, functions, and branches per functional source file**. Thresholds are enforced in `vitest.config.js`. Only the two bootstrap files, `src/main.jsx` and `server/index.js`, are excluded from the functional coverage percentage. Configuration, styles, tools, tests, and dependencies are outside that measurement. Coverage is execution evidence, not a security certification.
+The recorded report contains **32 passing tests** and **100% lines, statements, functions, and branches per functional source file**. Thresholds are enforced in `vitest.config.js`. Only the two bootstrap files, `src/main.jsx` and `server/index.js`, are excluded from the functional coverage percentage. Configuration, styles, tools, tests, and dependencies are outside that measurement. Coverage is execution evidence, not a security certification.
 
 ## Development and configuration
 

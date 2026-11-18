@@ -7,13 +7,16 @@ import { getRates } from './exchange-rates.js';
 async function readBody(req) {
   if (req.headers['content-type']?.split(';')[0].trim().toLowerCase() !== 'application/json')
     throw new ApiError(415, 'Se requiere contenido JSON.');
-  let text = '';
+  const chunks = [];
+  let bytes = 0;
   for await (const chunk of req) {
-    text += chunk;
-    if (Buffer.byteLength(text) > 16384)
-      throw new ApiError(413, 'La solicitud es demasiado grande.');
+    bytes += chunk.length;
+    if (bytes > 16384) throw new ApiError(413, 'La solicitud es demasiado grande.');
+    chunks.push(chunk);
   }
   try {
+    // HTTP chunks can split UTF-8 code points. Decode once, rejecting malformed sequences.
+    const text = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks));
     return JSON.parse(text);
   } catch {
     throw new ApiError(400, 'El JSON no es válido.');

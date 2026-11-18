@@ -62,6 +62,7 @@ tests/ui/components.test.jsx
 tests/ui/dashboard.test.jsx
 tests/ui/hooks.test.jsx
 tests/ui/services.test.js
+tests/unicode.test.js
 vite.config.js
 vitest.config.js
 ```

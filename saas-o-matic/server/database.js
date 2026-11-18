@@ -6,6 +6,14 @@ import { randomUUID } from 'node:crypto';
 export function openRepository(path) {
   if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true });
   const db = new DatabaseSync(path);
+  // SQLite lower() is ASCII-only. Normalize comparisons, never the stored customer name.
+  db.function('search_key', { deterministic: true }, (value) =>
+    value
+      .normalize('NFD')
+      .toLowerCase()
+      .replace(/n\u0303/g, 'ñ') // Keep ñ distinct from n when removing other diacritics.
+      .replace(/\p{M}/gu, ''),
+  );
   db.exec(`PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;
     CREATE TABLE IF NOT EXISTS customers (
       id TEXT PRIMARY KEY, companyName TEXT NOT NULL, taxId TEXT NOT NULL,
@@ -23,7 +31,7 @@ export function openRepository(path) {
     list: (query) =>
       db
         .prepare(
-          `SELECT * FROM customers WHERE instr(lower(companyName), lower(?)) > 0 OR instr(lower(taxId), lower(?)) > 0 ORDER BY createdAt DESC LIMIT 100`,
+          `SELECT * FROM customers WHERE instr(search_key(companyName), search_key(?)) > 0 OR instr(search_key(taxId), search_key(?)) > 0 ORDER BY createdAt DESC LIMIT 100`,
         )
         .all(query, query),
     get: (id) => db.prepare('SELECT * FROM customers WHERE id=?').get(id),
