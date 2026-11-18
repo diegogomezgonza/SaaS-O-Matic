@@ -1,0 +1,4 @@
+interface:
+  display_name: "SaaS-O-Matic UI Design"
+  short_description: "Build a distinctive responsive Tailwind UI"
+  default_prompt: "Use $client-register-ui-design to design or review a SaaS-O-Matic screen with Tailwind and shadcn/ui without generic AI styling."

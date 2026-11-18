@@ -1,0 +1,4 @@
+interface:
+  display_name: "SaaS-O-Matic Quality and Security"
+  short_description: "Protect architecture, quality, and customer data"
+  default_prompt: "Use $client-register-code-quality-security to implement or review a SaaS-O-Matic change with senior architecture and security standards."
