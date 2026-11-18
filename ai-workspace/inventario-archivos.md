@@ -68,15 +68,15 @@ vitest.config.js
 
 ## Motivos de conservación
 
-| Grupo | Uso comprobado |
-| --- | --- |
-| Entradas y configuración | HTML carga `src/main.jsx`; Vite configura React/Tailwind y proxy; jsconfig resuelve alias; package/lock fijan dependencias; Vitest y Prettier tienen comandos reproducibles |
-| `src` | Los componentes y hooks están conectados a la aplicación; los servicios encapsulan HTTP y los formatos y utilidades se importan desde consumidores reales |
-| `server` y `shared` | Servidor, SQLite, validación, cambios de divisa, catálogo y cálculo de precios participan en los flujos de clientes y simulaciones |
-| `tests` | Verifican dominio, persistencia, API, proxy, servicios, hooks y pantallas; todos forman parte de la suite ejecutada |
-| `scripts` | Los comandos npm usan los seis scripts para desarrollo, E2E, generación/servido de HTML y exportación PNG |
-| `components.json` | Configura el CLI de shadcn/ui y la ubicación de los componentes; no es un componente de ejecución |
-| `README.md` y `proceso-prueba.md` | Instrucciones de uso y evidencia de proceso solicitada para la entrega |
+| Grupo                             | Uso comprobado                                                                                                                                                              |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entradas y configuración          | HTML carga `src/main.jsx`; Vite configura React/Tailwind y proxy; jsconfig resuelve alias; package/lock fijan dependencias; Vitest y Prettier tienen comandos reproducibles |
+| `src`                             | Los componentes y hooks están conectados a la aplicación; los servicios encapsulan HTTP y los formatos y utilidades se importan desde consumidores reales                   |
+| `server` y `shared`               | Servidor, SQLite, validación, cambios de divisa, catálogo y cálculo de precios participan en los flujos de clientes y simulaciones                                          |
+| `tests`                           | Verifican dominio, persistencia, API, proxy, servicios, hooks y pantallas; todos forman parte de la suite ejecutada                                                         |
+| `scripts`                         | Los comandos npm usan los seis scripts para desarrollo, E2E, generación/servido de HTML y exportación PNG                                                                   |
+| `components.json`                 | Configura el CLI de shadcn/ui y la ubicación de los componentes; no es un componente de ejecución                                                                           |
+| `README.md` y `proceso-prueba.md` | Instrucciones de uso y evidencia de proceso solicitada para la entrega                                                                                                      |
 
 ## Archivos generados y datos
 
@@ -84,7 +84,7 @@ Se agrupan aparte de las fuentes para no confundir dependencias instaladas con c
 
 - `coverage-report/index.html`, `report.css`, `report-data.json`, `coverage.png` y el árbol `details/`: informe y detalle navegable solicitados; se regeneran mediante `npm run test:coverage`. Se conserva esta evidencia en la entrega. Los JSON internos `coverage-summary.json` y `coverage-final.json` son entradas del generador y están excluidos de Git.
 - `coverage-run.json`: resultado intermedio de Vitest utilizado por el generador; excluido de Git.
-- `test-results/dashboard-320.png`, `dashboard-390.png`, `dashboard-768.png`, `dashboard-1440.png` y `form-mobile.png`: capturas regenerables de E2E; excluidas de Git. Las evidencias seleccionadas se copian en `../ai-workspace/evidencias/`.
+- `test-results/dashboard-320.png`, `dashboard-390.png`, `dashboard-768.png`, `dashboard-1440.png` y `form-mobile.png`: capturas completas regenerables de E2E. `preview-1440.png` y `preview-390.png` son capturas de viewport para el README. Todas están excluidas de Git; las evidencias seleccionadas se copian en `../ai-workspace/evidencias/`. `cobertura.png` es una captura de la portada real del informe para el README; el PNG completo se conserva en `coverage-report/coverage.png`.
 - `dist/index.html` y `dist/assets/`: salida necesaria para probar el build con preview; regenerable y excluida de Git.
 - `data/client-register.sqlite` y sus archivos auxiliares WAL/SHM: datos persistidos de la aplicación; conservados y excluidos de Git.
 - `node_modules/`: dependencias instaladas, no fuentes propias ni contenido de entrega; se recrean con `npm ci`.

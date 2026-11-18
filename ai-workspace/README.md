@@ -1,23 +1,43 @@
-# Espacio de trabajo con IA de SaaS-O-Matic
+# SaaS-O-Matic — AI Engineering Workspace
 
-Esta carpeta forma parte de la entrega junto al código en `../saas-o-matic/`. Permite revisar el planteamiento del sistema, las instrucciones dadas a la IA, las decisiones de arquitectura y las comprobaciones realizadas.
+Versioned specifications, architecture decisions, project skills, selected prompts, and verification evidence for the application in [`saas-o-matic/`](../saas-o-matic/).
 
-## Recorrido de revisión
+## Documentation index
 
-| Dimensión del enunciado | Evidencia |
-| --- | --- |
-| Planificación y especificaciones | [Plan de desarrollo](planificacion.md), [reglas, contratos y validaciones](especificacion.md) y primeras instrucciones en [prompts seleccionados](prompts.md) |
-| Arquitectura y directrices de generación | [Arquitectura y modelo SQLite](arquitectura.md), [AGENTS.md](../AGENTS.md) y [skills del proyecto](skills/) |
-| Interacción real y control de calidad | [Prompts seleccionados](prompts.md), [notas de iteración](iteraciones.md), [registro del proceso](../saas-o-matic/proceso-prueba.md), [verificación](verificacion.md), [capturas](evidencias/) y [cobertura](../saas-o-matic/coverage-report/index.html) |
+| Area                   | Reference                                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| Planning               | [Development plan](planificacion.md)                                                         |
+| Business rules and API | [Specification, contracts, and validation](especificacion.md)                                |
+| Architecture           | [Feature boundaries and SQLite data model](arquitectura.md)                                  |
+| AI interaction         | [Selected prompts](prompts.md) and [iteration notes](iteraciones.md)                         |
+| Engineering history    | [Process log](../saas-o-matic/proceso-prueba.md)                                             |
+| Code review and checks | [Verification notes and known limitations](verificacion.md)                                  |
+| Repository maintenance | [Application file inventory](inventario-archivos.md)                                         |
+| Visual evidence        | [Screenshots](evidencias/) and [coverage report](../saas-o-matic/coverage-report/index.html) |
 
-## Cómo se documentó el trabajo
+## Project skills
 
-La especificación recoge las reglas y los contratos planteados antes de implementar, actualizados con las decisiones posteriores. La arquitectura describe el estado entregado. Los prompts proceden de esta conversación y tienen correcciones ortográficas y de puntuación; constituyen una selección editorial, no una exportación íntegra del chat. Las notas de iteración identifican decisiones, comprobaciones y cambios observados; no se han inventado respuestas, sesiones o commits.
+| Skill                                                                              | Scope                                                                                | Agent configuration                                                            |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| [Code quality and security](skills/client-register-code-quality-security/SKILL.md) | Architecture, validation, maintainability, data protection, and verification         | [openai.yaml](skills/client-register-code-quality-security/agents/openai.yaml) |
+| [UI design and product copy](skills/client-register-ui-design/SKILL.md)            | Responsive layout, accessibility, Tailwind/shadcn conventions, and interface writing | [openai.yaml](skills/client-register-ui-design/agents/openai.yaml)             |
 
-El usuario indicó GPT 5.6 Luna en alto para la etapa inicial y GPT 6.1 Sol en alto para la implementación y revisión. Se conserva esa atribución como selección declarada por el usuario, sin presentarla como telemetría comprobada.
+[AGENTS.md](../AGENTS.md) connects repository tasks to the versioned skills. The original `client-register-*` skill identifiers remain stable; their scope is SaaS-O-Matic.
 
-Las skills conservan sus identificadores originales `client-register-*` para mantener sus invocaciones; su contenido y alcance corresponden a SaaS-O-Matic. El nombre inicial aparece en los prompts y pasos históricos porque así se solicitó en su momento.
+## Record conventions
 
-## Reproducir la comprobación
+The specification contains the original implementation rules with subsequent decisions incorporated. Architecture documentation describes the current implementation. The prompt archive is a curated selection of actual conversation messages with spelling and punctuation edits; it is not a complete chat export. Iteration notes record observed decisions and checks without inventing sessions or commit history.
 
-Desde `saas-o-matic/`, ejecutar `npm ci` y `npm run test:coverage`. El comando ejecuta tests de dominio, API y frontend, recorrido funcional/responsive y build; genera el HTML navegable y su PNG. Los datos de pruebas son fixtures aislados, no clientes reales. Los límites de cobertura y de seguridad se explican en el propio informe y en el README de la aplicación.
+The user reported GPT 5.6 Luna with high reasoning for the initial phase and GPT 6.1 Sol with high reasoning for implementation and review. These labels record the user's declared model selection rather than independently verified session telemetry. Source prompts and process notes remain in their original language.
+
+## Reproduce verification
+
+```sh
+cd saas-o-matic
+npm ci
+npm run test:coverage
+```
+
+Run these commands from the repository root. The coverage command checks unit/integration tests, per-file thresholds, integrated browser flows, responsive layouts, and the frontend build, then generates an HTML report and PNG. Chrome or Playwright Chromium is required for browser checks. Fixtures are isolated from application data.
+
+See the [repository README](../README.md#testing-and-coverage) for commands and the [runtime reference](../saas-o-matic/README.md) for configuration.

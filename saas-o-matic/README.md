@@ -1,106 +1,159 @@
-# SaaS-O-Matic
+# SaaS-O-Matic — Runtime Reference
 
-SaaS-O-Matic: dashboard comercial para registrar clientes corporativos y presupuestar suscripciones con precios progresivos, impuestos y conversión de divisas. React + JavaScript + Vite, Tailwind CSS y componentes locales shadcn/ui; API Node.js y SQLite.
+Application commands, payloads, validation limits, and storage behavior. For the project overview, screenshots, architecture, and development workflow, see the [repository README](../README.md).
 
-La carpeta y el paquete se llaman `saas-o-matic`. El archivo de base de datos conserva su nombre técnico original, `client-register.sqlite`, para mantener los datos existentes.
+## Installation
 
-## Arranque local
-
-Requiere Node.js **22.14 o superior** y npm. SQLite está integrado en Node; en Node 22 muestra un aviso experimental esperado.
+Requires Node.js 22.14 or newer and npm. Run commands in this directory:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Abrir http://127.0.0.1:5173. El mismo comando inicia frontend y API (puerto 3000); Ctrl+C cierra ambos. No requiere claves de API ni servicios de base de datos. La primera ejecución crea `data/client-register.sqlite` sin clientes ficticios. Si un puerto está ocupado, liberarlo antes de arrancar. Internet es necesario para los tipos de cambio; EUR funciona sin el proveedor.
+The application runs at `http://127.0.0.1:5173`, with the API on port `3000`. The development command starts both services. SQLite is initialized automatically; Node.js 22 may print an experimental warning for `node:sqlite`.
 
-## Comprobar la aplicación
+## Scripts
 
-```sh
-npm test
-npm run build
-npm run format:check
-npm run test:e2e
-```
+| Command                                 | Purpose                                         |
+| --------------------------------------- | ----------------------------------------------- |
+| `npm run dev`                           | Start frontend and backend together             |
+| `npm run dev:client`                    | Start Vite only                                 |
+| `npm run dev:server`                    | Start the API in watch mode                     |
+| `npm run start:server`                  | Start the API without watching                  |
+| `npm run build`                         | Generate the frontend build in `dist/`          |
+| `npm run preview -- --host 127.0.0.1`   | Preview the frontend build on port 4173         |
+| `npm test`                              | Run the Vitest suite                            |
+| `npm run test:e2e`                      | Run browser flows and responsive checks         |
+| `npm run test:coverage`                 | Run coverage, E2E, build, and report generation |
+| `npm run coverage:serve`                | Serve the generated report on port 4174         |
+| `npm run coverage:png`                  | Export the latest report to PNG                 |
+| `npm run format`                        | Format application files                        |
+| `npm run format:check`                  | Verify formatting                               |
+| `npm run components:add -- <component>` | Add a local shadcn/ui component                 |
 
-## Informe de cobertura HTML y PNG
+## Build preview
 
-```sh
-npm run test:coverage
-npm run coverage:serve
-```
-
-Abrir http://127.0.0.1:4174. El informe generado está también en `coverage-report/index.html` y puede abrirse directamente desde el explorador de archivos. La carpeta `coverage-report/` contiene el detalle navegable por archivo y `coverage.png`, listo para adjuntar. Para compartir el informe interactivo hay que enviar la carpeta completa; para compartir una imagen basta con el PNG. `npm run coverage:png` vuelve a exportar el último HTML.
-
-`test:coverage` ejecuta Vitest con V8, el recorrido funcional/responsive en Chrome y el build. Exige **100% por archivo en líneas, sentencias, funciones y ramas**; devuelve error si no se alcanza el objetivo o si falla alguna comprobación. Al completar todo, genera el HTML y su PNG automáticamente. Usa el mismo navegador y requisitos de E2E. Los resultados son un snapshot fechado con huella SHA-256 del código medido; regenerarlo después de cambiar el código.
-
-Se incluyen todos los módulos funcionales de `src/`, `server/` y `shared/`, incluidos componentes, hooks, servicios y errores. Se excluyen únicamente los puntos de arranque `src/main.jsx` y `server/index.js` del porcentaje; tampoco se instrumentan configuración, CSS, dependencias, herramientas y tests. Una reexportación sin instrucciones ejecutables se identifica expresamente. Los mocks aíslan red y dependencias en pruebas unitarias; las pruebas REST usan SQLite real y E2E verifica la aplicación integrada. El 100% de cobertura no certifica ausencia de vulnerabilidades; los avisos de dependencias y los límites de despliegue se mantienen documentados por separado.
-
-E2E usa Chrome instalado en macOS o Chromium de Playwright (`npx playwright install chromium` en otros entornos). También admite `CHROME_PATH=/ruta/al/navegador`. Inicia servidores temporales en 5174 y 3101, utiliza SQLite en memoria y empresas claramente identificadas como fixtures; no modifica la base de desarrollo. Prueba altas, errores de NIF, búsqueda, selección, slider, persistencia, monedas, fallos/reintentos, formulario modal y acciones en móvil. Genera capturas a 320, 390, 768 y 1440 px en `test-results/` (excluidas de Git). Los tipos de cambio en E2E son fixtures deterministas; el proveedor real se prueba por separado.
-
-Para probar el build, usar dos terminales:
+Use two terminals in this directory:
 
 ```sh
+# Terminal 1
 npm run start:server
 ```
 
 ```sh
+# Terminal 2
 npm run build
 npm run preview -- --host 127.0.0.1
 ```
 
-Abrir http://127.0.0.1:4173. La API admite esos orígenes locales. `DATABASE_PATH` y `PORT` son opciones de servidor; si se cambia el puerto, actualizar también el proxy en `vite.config.js`.
+Open `http://127.0.0.1:4173`. Both development and preview proxy the backend route families without adding a prefix. Release occupied ports before starting either runtime.
 
-## Organización
+## Configuration
 
-```text
-shared/                 Catálogo y cálculo puro compartidos
-server/
-  app.js                Contrato HTTP, límites y errores seguros
-  database.js           Repositorio SQLite parametrizado
-  validation.js         Validación de entrada y allowlists
-  domain/tax-id.js      Algoritmos de control fiscal
-  exchange-rates.js     Proveedor fijo, validación y caché
-src/
-  app/                  Composición de la aplicación
-  components/layout/    Estructura general
-  components/ui/        Primitivas reutilizables
-  features/customers/   Componentes, hook y servicio de clientes
-  features/simulations/ Simulador, histórico y servicio
-  shared/               HTTP, formato de importes, hook de cambio
-  styles/               Tokens semánticos y estilos globales
-tests/                  Dominio e integración REST/SQLite
-scripts/                Arranque y prueba de navegador
+| Setting               | Default                                                        | Scope                          |
+| --------------------- | -------------------------------------------------------------- | ------------------------------ |
+| `DATABASE_PATH`       | `data/client-register.sqlite`, resolved from the server module | SQLite database location       |
+| `PORT`                | `3000`                                                         | API listening port             |
+| `CHROME_PATH`         | Detected macOS Chrome or Playwright Chromium                   | E2E and PNG export             |
+| Vite development port | `5173`                                                         | Application UI                 |
+| Vite preview port     | `4173`                                                         | Frontend build preview         |
+| Coverage viewer port  | `4174`                                                         | Report server                  |
+| E2E ports             | `5174` and `3101`                                              | Isolated browser-test services |
+
+Changing `PORT` also requires changing the proxy target in `vite.config.js`. No secret or external-service key is required by the frontend. Database and environment files are excluded from Git. The database filename retains its original technical name to preserve existing data.
+
+## Request examples
+
+The API base URL is `http://127.0.0.1:3000`. Routes do not use an `/api` prefix. Send JSON with `Content-Type: application/json`.
+
+### Register a customer
+
+`POST /customers`
+
+```json
+{
+  "companyName": "Example Company",
+  "taxId": "B12345674",
+  "email": "contact@example.test",
+  "country": "ES",
+  "plan": "Business"
+}
 ```
 
-Alias `@/` para `src`. Generar componentes con `npm run components:add -- button`; revisar los cambios antes de incorporarlos. Tailwind usa su plugin Vite y tokens semánticos; los componentes del sistema visual permanecen editables en el repositorio. Formatear con `npm run format`.
+This is synthetic example data. The API normalizes the tax identifier and email, validates the selected country and plan, and enforces uniqueness on `(country, taxId)`.
 
-## API
+### Save an estimate
 
-Rutas sin prefijo: `POST /customers` y `POST /simulations`, coincidiendo exactamente con el enunciado. JSON para escrituras; errores `{message, fields?}`. El frontend usa estas mismas rutas mediante el proxy de Vite en desarrollo y preview. Las antiguas rutas con `/api` devuelven 404.
+`POST /simulations`
 
-| Método | Ruta                       | Propósito                                |
-| ------ | -------------------------- | ---------------------------------------- |
-| GET    | /health                    | Disponibilidad                           |
-| GET    | /catalog                   | Países, impuestos y planes               |
-| GET    | /customers?q=              | Listar/buscar por nombre o identificador |
-| POST   | /customers                 | Crear cliente                            |
-| GET    | /customers/:id             | Datos de cliente                         |
-| GET    | /customers/:id/simulations | Historial guardado                       |
-| POST   | /simulations               | Calcular y persistir presupuesto         |
-| GET    | /exchange-rates            | Cambios EUR/USD/GBP validados            |
+```json
+{
+  "customerId": "<id-returned-by-customer-registration>",
+  "users": 15,
+  "storageGb": 100,
+  "apiCalls": 10000
+}
+```
 
-Cliente: `{companyName,taxId,email,country,plan}`. Simulación: `{customerId,users,storageGb,apiCalls}`. Los precios enviados por el navegador se rechazan; el servidor calcula el presupuesto. Estado 201 al crear, 422 en validación, 409 en duplicados y 404 si no existe el recurso. Máximo 100 resultados de búsqueda; se puede acotar por empresa/NIF.
+Replace `customerId` with an existing customer ID. The API calculates and stores the EUR price breakdown; client-supplied price fields are rejected.
 
-## Decisiones de negocio
+### Read records
 
-Primeros 10 usuarios a 10 EUR, siguientes 40 a 8 EUR, resto a 5 EUR. Importes en céntimos y redondeo único de impuesto. Ejemplo: 15 usuarios en ES → base 140 EUR, impuesto 29,40 EUR, total 169,40 EUR. Se guarda el desglose original; convertir divisas solo modifica la presentación y muestra la fecha del cambio.
+```text
+GET /health
+GET /catalog
+GET /customers?q=Example
+GET /customers/:id
+GET /customers/:id/simulations
+GET /exchange-rates
+```
 
-ES 21%, FR 20%, DE 19%, PT 23%, GB 20% constituyen un catálogo simplificado para esta prueba; no es un motor fiscal B2B. Starter, Business y Enterprise son etiquetas; almacenamiento y llamadas API no añaden recargos porque el enunciado no establece tarifas. Validar un checksum no prueba que un identificador exista en AEAT. Detalles, fuentes y contratos en `../ai-workspace/especificacion.md`.
+Searches return up to 100 matches. Customer history is ordered newest first. Missing resources return `404`.
 
-## Datos y límites de seguridad
+### Validation limits
 
-API enlazada a loopback, sin autenticación porque el alcance es una demostración local monousuario. **No publicar en Internet sin añadir autenticación, permisos por cliente, HTTPS y configuración de producción.** Las empresas, emails e identificadores solo se guardan en SQLite local; no se envían al proveedor de divisas ni a localStorage, y no se imprimen en logs. Se aplican validación estricta, consultas parametrizadas, restricciones de origen/host, JSON obligatorio, límite de cuerpo de 16 KB, rate limit y cabeceras básicas. El proveedor de cambio tiene timeout y caché; nunca se inventan tipos de cambio cuando falla.
+| Field         | Constraint                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| `companyName` | 2–120 characters                                                                           |
+| `taxId`       | 3–24 normalized alphanumeric characters; Spanish identifiers must pass checksum validation |
+| `email`       | Valid email shape, maximum 254 characters                                                  |
+| `country`     | ES, FR, DE, PT, or GB                                                                      |
+| `plan`        | Starter, Business, or Enterprise                                                           |
+| `users`       | Integer from 0 to 100,000                                                                  |
+| `storageGb`   | Integer from 0 to 1,000,000                                                                |
+| `apiCalls`    | Integer from 0 to 1,000,000,000                                                            |
 
-El [espacio de trabajo con IA](../ai-workspace/README.md), en la raíz del repositorio, reúne planificación, especificaciones, arquitectura, prompts reales seleccionados, skills y evidencias de revisión. La auditoría de dependencias y sus limitaciones se documentan en `../ai-workspace/verificacion.md`. El registro del proceso está en [proceso-prueba.md](proceso-prueba.md), en la raíz de esta carpeta.
+Unknown fields are rejected. Errors use `{ message, fields? }`; successful writes return `201`, validation failures `422`, and duplicate customers `409`.
+
+## Persistence and exchange rates
+
+`server/database.js` owns SQLite access, enables foreign keys and WAL, and uses parameterized statements. Customers and simulations are stored in separate tables. Estimates retain their original prices and tax breakdown in integer EUR cents.
+
+Exchange rates come from a fixed HTTPS provider through the backend. Responses are validated, requests time out after seven seconds, and accepted values are cached for one hour. The UI supports EUR, USD, and GBP. If the provider fails, EUR remains available and the interface offers a retry. Currency conversion changes display values only.
+
+## Coverage artifacts
+
+`npm run test:coverage` writes:
+
+```text
+coverage-report/
+├── index.html         Overview with coverage bars and verification results
+├── report.css         Overview styles
+├── report-data.json   Normalized metrics and source fingerprint
+├── details/           Navigable source coverage
+└── coverage.png       Full-page PNG export
+```
+
+Open the HTML directly or run `npm run coverage:serve`. Browser checks require Chrome or `npx playwright install chromium`. E2E fixtures use an in-memory database and do not modify application records. Raw coverage inputs and temporary browser output are ignored by Git.
+
+## Project skills and documentation
+
+- [Code quality and security skill](../ai-workspace/skills/client-register-code-quality-security/SKILL.md).
+- [UI design and product-copy skill](../ai-workspace/skills/client-register-ui-design/SKILL.md).
+- [Architecture and SQLite model](../ai-workspace/arquitectura.md).
+- [Business rules and API specification](../ai-workspace/especificacion.md).
+- [Verification and dependency advisories](../ai-workspace/verificacion.md).
+- [Engineering process log](proceso-prueba.md).
+
+The API currently runs within a loopback, single-user boundary. Authentication, authorization, and HTTPS must be configured before external hosting. Tax profiles do not implement exemptions or reverse-charge rules. These operational limits are separate from source coverage.

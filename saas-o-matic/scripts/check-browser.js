@@ -91,6 +91,9 @@ try {
       return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     });
     await page.screenshot({ path: `${resultDir}/dashboard-${width}.png`, fullPage: true });
+    if ([1440, 390].includes(width)) {
+      await page.screenshot({ path: `${resultDir}/preview-${width}.png`, fullPage: false });
+    }
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,

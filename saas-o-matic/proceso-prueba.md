@@ -35,6 +35,11 @@ El archivo se encuentra en la raíz de `saas-o-matic` por indicación del usuari
 
 ## Implementación y comprobaciones
 
+- [x] Revisión de los README para una documentación técnica profesional en inglés.
+  - Consultar la estructura de los README de Vite, Fastify y Vitest como referencia de organización.
+  - Documentar arranque, arquitectura, API, comandos, configuración, pruebas y límites técnicos, con enlaces directos a las dos skills.
+  - Incorporar capturas reales de escritorio, móvil y cobertura, enlazadas a las versiones completas, y retirar instrucciones sobre la entrega a terceros.
+
 - [x] Cambio del nombre del producto a SaaS-O-Matic.
   - Renombrar la carpeta y el paquete a `saas-o-matic`, y actualizar cabecera, título del navegador, README e informe de cobertura.
   - Conservar el archivo SQLite existente para mantener los datos guardados.
